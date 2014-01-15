@@ -36,6 +36,10 @@ public class Observer implements PeerConnection.Observer,DataChannel.Observer {
         System.out.println("DEBUG: " + dataChannel.label());
     }                         
 
+    public synchronized DataChannel getDataChannel() {
+        return this.dataChannel;
+    }
+
     @Override
     public synchronized void onIceGatheringChange(IceGatheringState newState) {
 
@@ -63,10 +67,12 @@ public class Observer implements PeerConnection.Observer,DataChannel.Observer {
     @Override
     public synchronized void onError() {
 
+        System.out.println("DEBUG: Error");
     }
 
     @Override
     public synchronized void onIceCandidate(IceCandidate candidate) {
+        System.out.println("NEW ICE Candidate");
 
 
     }
