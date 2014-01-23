@@ -1,6 +1,3 @@
-- WebRTC channels working from Java
-- support WebRTC data channels in Lantern as one transport
-- simple data transfer working between two demo Java clients
 - TURN and STUN servers minimize peer-to-peer network latency by traversing multiple layers of NATs 
 - signaling methods and protocols are not specified by WebRTC; it is outlined instead by JSEP; 
 - should future versions of WebRTC use JSON instead of SDP?
