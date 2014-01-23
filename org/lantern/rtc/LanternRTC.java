@@ -1,4 +1,4 @@
-package org.lantern.webrtc;
+package org.lantern.rtc;
 
 import org.webrtc.*;
 
@@ -10,16 +10,16 @@ import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.lang.Thread;
 
-public class LanternWebRTC {
+public class LanternRTC {
     private static final String STUN_SERVER = "stun:stun.l.google.com:19302";
     private PeerConnectionFactory f;
-    private PeerConnection offerPC;
-    private PeerConnection answerPC;
+    private PeerConnection pc;
     private Observer obsoff, obsans;
     private MediaConstraints pcConstraints;
     private LinkedList<PeerConnection.IceServer> iceServers;
+    private final IceObserver iceObserver;
 
-    public LanternWebRTC() {
+    public LanternRTC() {
         this.f = new PeerConnectionFactory();
         this.pcConstraints = new MediaConstraints();
         this.pcConstraints.optional.add(
@@ -30,7 +30,11 @@ public class LanternWebRTC {
 
     }
 
-    public SessionDescription createOffer() {
+    public static interface IceObserver {
+        public void onIceServers(List<PeerConnection.IceServer> iceServers);
+    }
+
+    public SessionDescription createOffer() throws InterruptedException {
         this.obsoff =
             new Observer("PCTest: offerer");
         this.offerPC = this.f.createPeerConnection(
@@ -45,37 +49,58 @@ public class LanternWebRTC {
         /* send offer SDP to other peer */
         offerPC.createOffer(sdp, new MediaConstraints());
         sdp.await();
+        offerPC.setLocalDescription(sdp, sdp.getSdp());
         return sdp.getSdp();
     }
 
-    public void createAnswer(SessionDescription offerSdp) {
+    private MediaConstraints createConstraints() {
+        MediaConstraints pcConstraints = new MediaConstraints();
+        pcConstraints.optional.add(
+                new MediaConstraints.KeyValuePair("RtpDataChannels", "true"));
+        return pcConstraints;
+    }
+
+    public void createAnswer(SessionDescription offerSdp) throws InterruptedException {
         this.obsans = 
             new Observer("PCTest: answerer");
         this.answerPC = this.f.createPeerConnection(
                 this.iceServers, this.pcConstraints, obsans
         );
-        SDPHandler sdp;
+        this.obsans.setPeerConnection(this.answerPC);
+        SDPHandler sdp = new SDPHandler();
+        this.answerPC.createOffer(sdp, this.createConstraints());
+        sdp.await();
+        this.answerPC.setLocalDescription(sdp, sdp.getSdp());
+        sdp.await();
+        System.out.println("**** PRINTING ICE CANDS *****");
+        for (IceCandidate candidate : this.obsans.candidates) {
+            System.out.println(candidate);
+        }
+        System.out.println("**** DONE PRINTING ****");
 
-        /* process offer sdp */
+        /* process offer sdp 
         sdp = new SDPHandler();
         answerPC.setRemoteDescription(sdp, offerSdp);
-        sdp.await();
+        sdp.await();         */
 
-        /* send answer SDP back to offerer */
+        /* send answer SDP back to offerer 
         sdp = new SDPHandler();
         answerPC.createAnswer(sdp, new MediaConstraints());
         sdp.await();
         SessionDescription answerSdp = sdp.getSdp();
         System.out.println(answerSdp);
         answerPC.setLocalDescription(sdp, answerSdp);
-        sdp.await();
+        sdp.await();                       */
     }
 
-    public void createPeerSession(String type) {
-        SessionDescription offerSdp = this.createOffer();
-        this.createAnswer(offerSdp);
-        this.obsoff.getDataChannel().close();
-        //this.obsans.getDataChannel().close();
+    public void createPeerSession(String type) throws InterruptedException {
+        if (type.equals("offer")) {
+            SessionDescription offerSdp = this.createOffer();
+        } else {
+            this.createAnswer(null);
+        }
+        //this.createAnswer(offerSdp);
+        //this.obsoff.getDataChannel().close();
         //this.sendMessage(offerDC, "hello!");
     }
 
@@ -90,13 +115,6 @@ public class LanternWebRTC {
                 data, false
         );
         dc.send(buffer);
-    }
-
-    public static void main(String[] args) {
-        String type = args[0];
-        LanternWebRTC rtc = new LanternWebRTC();
-        rtc.createPeerSession(type);
-        //rtc.createPeerConnection();
     }
 
 }

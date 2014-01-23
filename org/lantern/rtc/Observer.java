@@ -4,6 +4,7 @@ import org.webrtc.PeerConnection;
 import org.webrtc.DataChannel;
 import org.webrtc.MediaStream;
 import org.webrtc.IceCandidate;
+import java.util.LinkedList;
 import org.webrtc.PeerConnection.IceConnectionState;
 import org.webrtc.PeerConnection.IceGatheringState;
 import org.webrtc.PeerConnection.SignalingState;
@@ -13,9 +14,17 @@ import java.nio.ByteBuffer;
 public class Observer implements PeerConnection.Observer,DataChannel.Observer {
     private String name;
     private DataChannel dataChannel;
+    public LinkedList<IceCandidate> candidates;
+    private PeerConnection pc;
 
     public Observer(String name) {
-        this.name = name;
+        this.name = name;           
+        this.candidates = new LinkedList<IceCandidate>();
+        this.pc = null;
+    }
+
+    public void setPeerConnection(PeerConnection pc) {
+        this.pc = pc;
     }
 
     @Override
@@ -42,6 +51,10 @@ public class Observer implements PeerConnection.Observer,DataChannel.Observer {
 
     @Override
     public synchronized void onIceGatheringChange(IceGatheringState newState) {
+        System.out.println("DEBUG: ICE Gathering state " + newState);
+        if (newState == IceGatheringState.GATHERING) {
+            return;
+        }
 
     }
 
@@ -73,8 +86,11 @@ public class Observer implements PeerConnection.Observer,DataChannel.Observer {
     @Override
     public synchronized void onIceCandidate(IceCandidate candidate) {
         System.out.println("NEW ICE Candidate");
-
-
+        System.out.println(candidate);
+        System.out.println("END NEW ICE Candidate");
+        //SDPHandler sdp = new SDPHandler();
+        //this.pc.createOffer(sdp, new MediaConstraints());
+        this.candidates.add(candidate);
     }
 
     @Override

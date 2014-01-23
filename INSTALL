@@ -1,0 +1,22 @@
+Chromium Depot Tools
+* https://sites.google.com/a/chromium.org/dev/developers/how-tos/depottools
+* http://dev.chromium.org/developers/how-tos/depottools
+add depot tools to your PATH env var
+ 
+gyp - a meta-build system used to generate build files
+gclient - repo tool
+ 
+gclient config http://webrtc.googlecode.com/svn/trunk
+gclient sync --force
+
+/* to generate the jar */
+echo "target_os = ['android', 'unix']" >> .gclient
+gclient sync --nohooks
+cd trunk
+source ./build/android/envsetup.sh
+
+Make sure JAVA_HOME points to Oracle JDK
+
+cd trunk && ninja -C out/Debug
+
+

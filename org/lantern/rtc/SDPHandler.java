@@ -3,6 +3,8 @@ package org.lantern.webrtc;
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+ 
 
 public class SDPHandler implements SdpObserver {
     private boolean success = false;
@@ -37,6 +39,7 @@ public class SDPHandler implements SdpObserver {
 
     public boolean await() {
         try {
+            latch.await(1000, TimeUnit.MILLISECONDS);
             return getSuccess();
         } catch (Exception e) {
             throw new RuntimeException(e);
