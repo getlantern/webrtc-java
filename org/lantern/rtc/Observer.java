@@ -1,4 +1,4 @@
-package org.lantern.webrtc;
+package org.lantern.rtc;
 
 import org.webrtc.PeerConnection;
 import org.webrtc.DataChannel;
@@ -36,18 +36,16 @@ public class Observer implements PeerConnection.Observer,DataChannel.Observer {
     @Override
     public synchronized void onDataChannel(DataChannel remoteChannel) {
         System.out.println("DATA channel!!!");
+        this.setDataChannel(remoteChannel);
+
 
     }
 
     public synchronized void setDataChannel(DataChannel dataChannel) {
         this.dataChannel = dataChannel;
         this.dataChannel.registerObserver(this);
-        System.out.println("DEBUG: " + dataChannel.label());
+        System.out.println("Setting data channel: " + dataChannel.label());
     }                         
-
-    public synchronized DataChannel getDataChannel() {
-        return this.dataChannel;
-    }
 
     @Override
     public synchronized void onIceGatheringChange(IceGatheringState newState) {
@@ -86,7 +84,9 @@ public class Observer implements PeerConnection.Observer,DataChannel.Observer {
     @Override
     public synchronized void onIceCandidate(IceCandidate candidate) {
         System.out.println("NEW ICE Candidate");
-        System.out.println(candidate);
+        System.out.println(candidate.sdpMLineIndex);
+        System.out.println(candidate.sdpMid);
+        System.out.println(candidate.sdp);
         System.out.println("END NEW ICE Candidate");
         //SDPHandler sdp = new SDPHandler();
         //this.pc.createOffer(sdp, new MediaConstraints());

@@ -1,4 +1,4 @@
-package org.lantern.webrtc;
+package org.lantern.rtc;
 
 import org.webrtc.SdpObserver;
 import org.webrtc.SessionDescription;

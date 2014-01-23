@@ -17,6 +17,18 @@ source ./build/android/envsetup.sh
 
 Make sure JAVA_HOME points to Oracle JDK
 
+webrtc GYP-related variables
+- export GYP_DEFINES="build_with_libjingle=1 build_with_chromium=0 libjingle_java=1 $GYP_DEFINES"
+
 cd trunk && ninja -C out/Debug
 
+Android specific steps. *
+Select build system (optional for all OSs except Android where ninja is
+mandatory). *
+gclient sync --force
 
+
+# prevents issue with missing jni.h error (java_home has to be set in gyp even if $JAVA_HOME is set)
+GYP_DEFINES="build_with_libjingle=1 build_with_chromium=0 java_home=/usr/local/java/jdk1.7.0_45" gclient runhooks
+
+gzip -c libjingle_peerconnection_so.so > libjingle.gz && ls -sh libjingle.gz

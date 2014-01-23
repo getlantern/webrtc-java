@@ -1,6 +1,6 @@
 #!/bin/bash
 
-rm -rf org/lantern/webrtc/*.class
+rm -rf org/lantern/rtc/*.class
 # Change directory to the PRODUCT_DIR (e.g. out/Debug).
 export LD_LIBRARY_PATH=`pwd`
 
@@ -10,5 +10,5 @@ export JAVA_HOME=/usr/local/java/jdk1.7.0_45
 
 export CLASSPATH='.:libjingle_peerconnection.jar'
 
-${JAVA_HOME}/bin/javac -cp $CLASSPATH org/lantern/webrtc/*.java
-${JAVA_HOME}/bin/java -cp $CLASSPATH org.lantern.webrtc.LanternWebRTC $1
+${JAVA_HOME}/bin/javac -cp $CLASSPATH org/lantern/rtc/*.java
+${JAVA_HOME}/bin/java -cp $CLASSPATH org.lantern.rtc.LanternRTC $1

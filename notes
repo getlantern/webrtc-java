@@ -1,0 +1,15 @@
+- WebRTC channels working from Java
+- support WebRTC data channels in Lantern as one transport
+- simple data transfer working between two demo Java clients
+- TURN and STUN servers minimize peer-to-peer network latency by traversing multiple layers of NATs 
+- signaling methods and protocols are not specified by WebRTC; it is outlined instead by JSEP; 
+- should future versions of WebRTC use JSON instead of SDP?
+- ICE, STUN, and TURN are necessary to establish and maintain a peer-to-peer connection over UDP.
+
+** OFFER/ANSWER mechanism **
+- p1 create RTCPeerConnection object
+- p1 create offer and set local description with offer details
+- p1 stringify the offer and use signaling mechanism to send offer to p2
+- p2 calls setRemoteDescription with offer 
+- p2 creates answer; p2 sets answers as local description; p2 sends stringified answer back to p1
+- p1 sets answer using setRemoteDescription
