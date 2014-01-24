@@ -8,7 +8,7 @@ export LD_LIBRARY_PATH=`pwd`
 # <(PRODUCT_DIR).
 export JAVA_HOME=/usr/local/java/jdk1.7.0_45
 
-export CLASSPATH='.:libjingle_peerconnection.jar'
+export CLASSPATH='.:libjingle_peerconnection.jar:junit-4.11.jar'
 
 ${JAVA_HOME}/bin/javac -cp $CLASSPATH org/lantern/rtc/*.java
 ${JAVA_HOME}/bin/java -cp $CLASSPATH org.lantern.rtc.LanternRTC $1
