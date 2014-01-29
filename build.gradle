@@ -1,5 +1,41 @@
-task hello {
-    doLast {
-        println 'Hello world!'
+
+project(':webrtc-java') {
+    apply plugin: 'java'
+
+    uploadArchives {
+        repositories {
+            flatDir {
+                dirs 'repos'
+            }
+        }
     }
+
+
+    sourceSets {
+        lantern {
+            java {
+                srcDir 'org/rtc'
+            }
+            resources {
+                srcDir 'org/resources'
+            }
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile files('./libs/libjingle_peerconnection.jar')
+        compile 'junit:junit:4.11'
+    }
+
+    task makeLib {
+        doLast {
+            println 'Hello world!'
+        }
+    }  
+
+    build.dependsOn makeLib
 }
