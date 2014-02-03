@@ -12,12 +12,12 @@ project(':webrtc-java') {
 
 
     sourceSets {
-        lantern {
+        main {
             java {
-                srcDir 'org/rtc'
+                srcDir 'org/lantern/rtc'
             }
             resources {
-                srcDir 'org/resources'
+                srcDir 'libs'
             }
         }
     }
@@ -33,6 +33,7 @@ project(':webrtc-java') {
 
     task makeLib {
         doLast {
+            println sourceSets.main.output.classesDir
             println 'Hello world!'
         }
     }  

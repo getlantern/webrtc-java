@@ -14,6 +14,10 @@ import java.util.LinkedList;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.lang.Thread;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.io.IOException;
 
 public class LanternRTC {
     private static final String STUN_SERVER = "stun:stun.l.google.com:19302";
@@ -84,9 +88,9 @@ public class LanternRTC {
         public LanternRTCPeer(PeerConnectionFactory f, String obsName, LinkedList<PeerConnection.IceServer> iceServers) {
             this.sdp = new SDPHandler();
             this.mc = new MediaConstraints();
-            this.mc.mandatory.add(
+            /*this.mc.mandatory.add(
                 new MediaConstraints.KeyValuePair("DtlsSrtpKeyAgreement", "true")
-            );
+            );*/
 
             /* this needs replaced with
              * this.mc.optional.add(
@@ -97,8 +101,12 @@ public class LanternRTC {
              * when supported
              *
              */
+            /*this.mc.optional.add(
+                new MediaConstraints.KeyValuePair("RtpDataChannels", "true"));*/
             this.mc.optional.add(
-                new MediaConstraints.KeyValuePair("RtpDataChannels", "true"));
+                new MediaConstraints.KeyValuePair("internalSctpDataChannels",
+                    "true")
+            );
             this.obs = new Observer(obsName);
             this.pc = f.createPeerConnection(
                 iceServers, this.mc, this.obs
@@ -107,13 +115,25 @@ public class LanternRTC {
 
         public boolean sendMessage(String message) {
             DataChannel.Buffer buffer = new DataChannel.Buffer(
-                    ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8"))), false);
+                ByteBuffer.wrap(message.getBytes(Charset.forName("UTF-8"))), false
+            );
             return this.dc.send(buffer);
         }
 
-
-        public void sendFile(File f) {
-
+        public boolean sendFile(File f) {
+            Path path   = Paths.get("file.txt");
+            try {
+                byte[] data = Files.readAllBytes(path);
+                DataChannel.Buffer buffer = new DataChannel.Buffer(
+                    ByteBuffer.wrap(data), false
+                );
+                return this.dc.send(buffer);
+            }
+            catch (IOException ex) {
+                System.out.println(ex.toString());
+                System.out.println("Error opening test file! " + path.toString());
+            }
+            return false;
         }
 
         public void sdpClear() {
@@ -178,7 +198,7 @@ public class LanternRTC {
         p1.waitDelaysFinish();
 
         /* message successfully sent over data channel */
-        assertTrue(p1.sendMessage("hey"));
+        //assertTrue(p1.sendMessage("hey"));
 
         /* close data channels 
          * and shut down peer connection
