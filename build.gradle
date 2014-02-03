@@ -1,42 +1,39 @@
+apply plugin: 'java'
 
-project(':webrtc-java') {
-    apply plugin: 'java'
-
-    uploadArchives {
-        repositories {
-            flatDir {
-                dirs 'repos'
-            }
-        }
-    }
-
-
-    sourceSets {
-        main {
-            java {
-                srcDir 'org/lantern/rtc'
-            }
-            resources {
-                srcDir 'libs'
-            }
-        }
-    }
-
+uploadArchives {
     repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        compile files('./libs/libjingle_peerconnection.jar')
-        compile 'junit:junit:4.11'
-    }
-
-    task makeLib {
-        doLast {
-            println sourceSets.main.output.classesDir
-            println 'Hello world!'
+        flatDir {
+            dirs 'repos'
         }
-    }  
-
-    build.dependsOn makeLib
+    }
 }
+
+
+sourceSets {
+    main {
+        java {
+            srcDir 'org/lantern/rtc'
+        }
+        resources {
+            srcDir 'libs'
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile files("./libs/libjingle_peerconnection.jar")
+    compile "junit:junit:4.11"
+}
+
+task makeLib {
+    doLast {
+        println sourceSets.main.output.classesDir
+            println 'Hello world!'
+    }
+}  
+
+build.dependsOn makeLib
