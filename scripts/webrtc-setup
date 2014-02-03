@@ -3,13 +3,14 @@
 # Change directory to the PRODUCT_DIR (e.g. out/Debug).
 export LD_LIBRARY_PATH=`pwd`
 
+mkdir build
 cd build
 gclient config http://webrtc.googlecode.com/svn/trunk
 echo "target_os = ['android', 'unix']" >> .gclient
 gclient sync --force
 cd trunk
 source ./build/android/envsetup.sh
-ninja -C out/Debug
+ninja -C out/Release
 cd ../../
 # move jar and shared native lib to libs dir
 mv build/trunk/out/Debug/libjingle_peerconnection.jar libs/
