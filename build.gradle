@@ -20,6 +20,26 @@ sourceSets {
     }
 }
 
+jar {
+    manifest {
+        attributes("Implementation-Title": "LanternRTC",
+                "Implementation-Version": 1.0,
+                "Main-Class": "org.lantern.rtc.LanternRTC",
+                "ClassPath": sourceSets.main.output.resourcesDir)
+    }
+}
+
+task runJar(dependsOn:jar) << {
+    javaexec { main="-jar"; args jar.archivePath } 
+}
+
+task run ( dependsOn: 'classes', type: JavaExec ) {
+    main = 'org.lantern.rtc.LanternRTC'
+    systemProperty "java.library.path", "$projectDir/libs"
+    classpath = sourceSets.main.runtimeClasspath
+    args 'offer'
+}
+
 repositories {
     mavenCentral()
 }
@@ -31,8 +51,8 @@ dependencies {
 
 task makeLib {
     doLast {
-        println sourceSets.main.output.classesDir
-            println 'Hello world!'
+        println sourceSets.main.runtimeClasspath
+        println 'DEBUG: Finished building!'
     }
 }  
 
