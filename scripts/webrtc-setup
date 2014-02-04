@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Change directory to the PRODUCT_DIR (e.g. out/Debug).
+# Change directory to the PRODUCT_DIR (e.g. out/Release).
 export LD_LIBRARY_PATH=`pwd`
 
 mkdir build
@@ -13,7 +13,7 @@ source ./build/android/envsetup.sh
 ninja -C out/Release
 cd ../../
 # move jar and shared native lib to libs dir
-mv build/trunk/out/Debug/libjingle_peerconnection.jar libs/
-mv build/trunk/out/Debug/libjingle_peerconnection_so.so libs/
+mv build/trunk/out/Release/libjingle_peerconnection.jar libs/
+mv build/trunk/out/Release/libjingle_peerconnection_so.so libs/
 # remove old build files
-rm -rf build/*
+#rm -rf build/*
